@@ -33,8 +33,7 @@ func httpIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func httpIPQueryHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// fmt.Fprintf(w, "query ip is :%s", ps.ByName("ipaddress"))
-
+	fmt.Fprintf(w, "query ip is :%s", ps.ByName("ipaddress"))
 	return
 }
 
@@ -42,6 +41,6 @@ func httpIPQueryHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 func Start(url string) {
 	router := httprouter.New()
 	router.GET("/", httpIndex)
-	router.GET("/ip/:ipaddress", httpIPQueryHandler)
+	router.GET("/geoip2/:ipaddress", httpIPQueryHandler)
 	log.Fatal(http.ListenAndServe(url, router))
 }
