@@ -1,0 +1,35 @@
+
+# config file for geoip server
+[global]
+listenAt="127.0.0.1:7070"
+dataFolder="."
+logLevel="info"
+logFile="/var/log/geoip-server.log"
+
+# current only support use redis to store data for api query
+[database]
+host="127.0.0.1"
+port=6379
+database=0
+
+
+# geodata for download geolite and define the crond job
+[geodata]
+geolite2_city = "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip"
+geolite2_country= "http://geolite.maxmind.com/download/geoip/database/GeoLite2-City-CSV.zip"
+updata=true
+crond="7d"
+
+# http download or using proxy to download geolite file
+[http]
+connect="direct"
+http_proxy=""
+
+# Maybe someday i will try dns way as a query service
+# [dns]
+# enable=false
+# port=53
+
+
+
+
