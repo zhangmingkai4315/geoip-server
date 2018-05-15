@@ -11,6 +11,6 @@ import (
 func Start(url string) {
 	router := httprouter.New()
 	router.GET("/", httpIndex)
-	router.GET("/geoip2/:ipaddress", httpIPQueryHandler)
+	router.GET("/api/geoip2/:ipaddress", httpIPQueryHandler)
 	log.Fatal(http.ListenAndServe(url, router))
 }

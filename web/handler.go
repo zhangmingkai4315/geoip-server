@@ -1,10 +1,14 @@
 package web
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	"github.com/zhangmingkai4315/geoip-server/cache"
 )
 
 func apiHelp() string {
@@ -33,12 +37,14 @@ func httpIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func httpIPQueryHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	fmt.Fprintf(w, "query ip is :%s", ps.ByName("ipaddress"))
-	// ipaddress := ps.ByName("address")
-	// ipinfo := &cache.IPInfo{IP: ipaddress}
-	// infostring, err := ipinfo.GetInfo()
-	// if err != nil {
-
-	// }
-	return
+	// fmt.Fprintf(w, "query ip is :%s", ps.ByName("ipaddress"))
+	ipaddress := ps.ByName("ipaddress")
+	ipinfo := &cache.IPInfo{IP: ipaddress}
+	err := ipinfo.GetInfo("en")
+	if err != nil {
+		log.Printf("[Error] IP:%s Error:%s\n", ipaddress, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
+	json.NewEncoder(w).Encode(ipinfo)
 }
