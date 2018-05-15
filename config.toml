@@ -8,8 +8,7 @@ logFile="/var/log/geoip-server.log"
 
 # current only support use redis to store data for api query
 [database]
-host="127.0.0.1"
-port=6379
+hostAndPort="127.0.0.1:6379"
 database=0
 
 

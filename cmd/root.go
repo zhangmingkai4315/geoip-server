@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/zhangmingkai4315/geoip-server/cache"
 	"github.com/zhangmingkai4315/geoip-server/config"
 )
 
@@ -25,6 +26,12 @@ func initConfig() {
 		log.Printf("Read config file error:%s\n", err)
 		os.Exit(1)
 	}
+
+	_, err = cache.InitConnect(appConfig.DatabaseConfig.HostAndPort)
+	if err != nil {
+		log.Printf("Connect redis server fail : %s\n", err)
+	}
+	log.Printf("Connect redis server success\n")
 }
 
 var rootCmd = &cobra.Command{

@@ -12,3 +12,4 @@
 *.out
 geoip-server
 geoip
+data/**/*.csv

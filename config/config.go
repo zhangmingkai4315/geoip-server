@@ -22,9 +22,8 @@ type globalConfig struct {
 }
 
 type databaseConfig struct {
-	Host     string `toml:"host"`
-	Port     int    `toml:"port"`
-	Database int    `toml:"database"`
+	HostAndPort string `toml:"hostAndPort"`
+	Database    int    `toml:"database"`
 }
 
 type geoDataConfig struct {
@@ -34,6 +33,7 @@ type geoDataConfig struct {
 	Crond              string `toml:"crond"`
 }
 
+// Using for download geoip database only
 type httpConfig struct {
 	Connect   string `toml:"connect"`
 	HTTPProxy string `toml:"http_proxy"`
