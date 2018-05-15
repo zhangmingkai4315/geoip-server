@@ -12,9 +12,7 @@ import (
 )
 
 func apiHelp() string {
-	help := `
-
-IP to Location query api server
+	help := `IP To Location Query Api Server
 -------------------------------
 /api/geoip2/:address  
 	- method get 

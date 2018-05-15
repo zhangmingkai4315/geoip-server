@@ -1,7 +1,8 @@
 package cache
 
 import (
-	"errors"
+	"log"
+	"os"
 
 	"github.com/garyburd/redigo/redis"
 )
@@ -15,7 +16,8 @@ func newPool(hostAndPort string) *redis.Pool {
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", hostAndPort)
 			if err != nil {
-				panic(err.Error())
+				log.Printf("Connect redis failure:%s\n", err)
+				os.Exit(1)
 			}
 			return c, err
 		},
@@ -25,8 +27,11 @@ func newPool(hostAndPort string) *redis.Pool {
 // InitConnect initialize cache pool for using later
 func InitConnect(hostAndPort string) (*redis.Pool, error) {
 	db = newPool(hostAndPort)
-	if db == nil {
-		return nil, errors.New("Error create redis connection pool")
+	c := db.Get()
+	defer c.Close()
+	err := c.Err()
+	if err != nil {
+		return nil, err
 	}
 	return db, nil
 }
