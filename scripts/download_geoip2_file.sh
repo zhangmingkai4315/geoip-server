@@ -3,7 +3,8 @@
 BASEDIR=$(dirname "$0")
 DATA_FOLDER=$(dirname "$0")/../data/
 GEOIP2_DOWNLOAD_URL=http://geolite.maxmind.com/download/geoip/database/GeoLiteCity_CSV/GeoLiteCity-latest.zip
-# check remote file md5 if the same then quit download process
+
+# check remote file etag or last modify if the same then quit download process
 
 # end
 
