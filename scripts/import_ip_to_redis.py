@@ -1,62 +1,17 @@
 # coding=utf-8
 import csv
 import json
-import socket
-
-import ipaddress
 import redis
 
+from utils import *
 
-DATA_FOLDER = '../data/'
+DATA_FOLDER = '../data/GeoLite2-City-CSV/'
 CITY_BLOCKS_IPv4_FILE = DATA_FOLDER+'GeoLite2-City-Blocks-IPv4.csv'
 CITY_BLOCKS_IPv6_FILE = DATA_FOLDER+'GeoLite2-City-Blocks-IPv6.csv'
 CITY_LOCATION_EN_FILE = DATA_FOLDER+'GeoLite2-City-Locations-en.csv'
 CITY_LOCATION_ZH_CN_FILE = DATA_FOLDER+'GeoLite2-City-Locations-zh-CN.csv'
 
 REDIS_SERVER = '127.0.0.1'
-
-
-def is_valid_ipv4_address(address):
-    """is_valid_ipv4_address will valid ipv4 address """
-    try:
-        socket.inet_pton(socket.AF_INET, address)
-    except AttributeError:  # no inet_pton here, sorry
-        try:
-            socket.inet_aton(address)
-        except socket.error:
-            return False
-        return address.count('.') == 3
-    except socket.error:  # not a valid address
-        return False
-
-    return True
-
-
-def is_valid_ipv6_address(address):
-    """is_valid_ipv6_address will valid ipv6 address """
-    try:
-        socket.inet_pton(socket.AF_INET6, address)
-    except socket.error:  # not a valid address
-        return False
-    return True
-
-
-def cidr_v4_to_score(cidr):
-    """cidr_v4_to_score will convert cidr string to int"""
-    net = ipaddress.IPv4Network(unicode(cidr))
-    start_ip_address = str(net[0])
-    score = 0
-    for v in start_ip_address.split('.'):
-        score = score*256+int(v, 10)
-    return score
-
-
-def ipv4_to_score(ip):
-    score = 0
-    for v in ip.split('.'):
-        score = score*256+int(v, 10)
-    return score
-
 
 def import_cities_to_redis(connection, location_file, lang):
     count = 0
@@ -126,10 +81,10 @@ def main():
     import_cities_to_redis(r, CITY_LOCATION_ZH_CN_FILE, 'zh-ch')
     print "Import city info success"
     import_cities_to_redis(r, CITY_LOCATION_EN_FILE, 'en')
-    # results = find_ipv4_info(r, '172.217.3.206', 'zh-ch')
-    # print results
-    # results = find_ipv4_info(r, '172.217.3.206', 'en')
-    # print results
+    results = find_ipv4_info(r, '172.217.3.206', 'zh-ch')
+    print results
+    results = find_ipv4_info(r, '172.217.3.206', 'en')
+    print results
 
 
 if __name__ == '__main__':
