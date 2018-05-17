@@ -3,7 +3,7 @@ import csv
 import json
 import redis
 
-from utils import *
+from utils import cidr_v4_to_score, is_valid_ipv4_address, ipv4_to_score
 
 DATA_FOLDER = '../data/GeoLite2-City-CSV/'
 CITY_BLOCKS_IPv4_FILE = DATA_FOLDER+'GeoLite2-City-Blocks-IPv4.csv'
@@ -12,6 +12,7 @@ CITY_LOCATION_EN_FILE = DATA_FOLDER+'GeoLite2-City-Locations-en.csv'
 CITY_LOCATION_ZH_CN_FILE = DATA_FOLDER+'GeoLite2-City-Locations-zh-CN.csv'
 
 REDIS_SERVER = '127.0.0.1'
+
 
 def import_cities_to_redis(connection, location_file, lang):
     count = 0
@@ -56,6 +57,7 @@ def import_ipv4_to_redis(connection, block_file):
 
 
 def find_ipv4_info(connection, ipaddress, lang):
+    print "Test ip address is %s, lang is %s " % (ipaddress, lang)
     if not is_valid_ipv4_address(ipaddress):
         return None
     ipaddress = ipv4_to_score(ipaddress)

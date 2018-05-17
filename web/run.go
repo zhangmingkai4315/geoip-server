@@ -18,5 +18,12 @@ func Start(url string) {
 	router.POST("/api/geoip2/iplist", httpIPListQueryHandler("en"))
 	router.POST("/api/geoip2/iplist/zh-cn", httpIPListQueryHandler("zh-ch"))
 	router.POST("/api/geoip2/iplist/en", httpIPListQueryHandler("en"))
+
+	router.GET("/api/asn/:ipaddress", httpIPASNQueryHandler)
+	router.POST("/api/asn/iplist", httpIPASNQueryHandler)
+
+	router.GET("/api/ip/:ipaddress", httpIPAllQueryHandler)
+	router.POST("/api/ip/iplist", httpIPAllListQueryHandler)
+
 	log.Fatal(http.ListenAndServe(url, router))
 }

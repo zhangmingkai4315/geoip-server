@@ -7,10 +7,10 @@ TEMP_FOLDER=$(dirname "$0")/../data/temp
 
 platform='unknown'
 unameStr=`uname`
-if [[ "$unameStr" == "Linux" ]];then
+if [[ "$unameStr" == "Linux" ]]; then
   platform="linux"
-elif [[ "$unameStr" == "Darwin" ]];then
-  platform="macosx"
+elif [[ "$unameStr" == "Darwin" ]]; then
+  platform="osx"
 fi
 	
 [ ! -d $DATA_FOLDER ] && mkdir -p $DATA_FOLDER
@@ -59,9 +59,9 @@ download_file()
     rm -rf $DATA_FOLDER/$3
     unzip -o $TEMP_FOLDER/$filename -d $DATA_FOLDER
     # mv $3* $3
-    find ./data -type d -name "$3_*" -exec mv {} $DATA_FOLDER/$3 \;
+    find ./data -type d -name "$3_*" | xargs -I '{}' mv {} $DATA_FOLDER/$3 
     mv -f $TEMP_FOLDER/$filename $BACKUP_FOLDER/$filename
-    if [[ "$platform" == "macosx" ]];then
+    if [[ "$platform" == "osx" ]];then
       newMD5Value=`md5 $BACKUP_FOLDER/$filename | awk -F " = " '{print $2}'`
     else
       newMD5Value=`md5sum $BACKUP_FOLDER/$filename | awk '{ print $1 }'`
@@ -75,4 +75,5 @@ download_file()
 
 download_file $GEOIP2_ASN_DOWNLOAD_URL $GEOIP2_ASN_DOWNLOAD_MD5_URL $GEOIP2_ASN_DATA_FOLDER
 download_file $GEOIP2_DOWNLOAD_URL $GEOIP2_DOWNLOAD_MD5_URL $GEOIP2_DATA_FOLDER
-
+echo "Clean Temp Folder"
+rm -rf $TEMP_FOLDER
