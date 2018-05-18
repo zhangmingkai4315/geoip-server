@@ -3,6 +3,7 @@ import csv
 import redis
 
 from utils import cidr_v4_to_score, is_valid_ipv4_address, ipv4_to_score
+from utils import update_progress
 
 DATA_FOLDER = '../data/GeoLite2-ASN-CSV/'
 ASN_BLOCKS_IPv4_FILE = DATA_FOLDER+'GeoLite2-ASN-Blocks-IPv4.csv'
@@ -13,9 +14,12 @@ REDIS_SERVER = '127.0.0.1'
 
 
 def import_asn_to_redis(connection, asn_file):
-    count = 0
     with open(asn_file) as csvfile:
         reader = csv.DictReader(csvfile)
+        update_progress("import_asn_to_redis", 0)
+        row_count = sum(1 for row in reader)
+        csvfile.seek(0)
+        count = 0
         for row in reader:
             count = count+1
             try:
@@ -26,11 +30,17 @@ def import_asn_to_redis(connection, asn_file):
                 connection.hset('asnid:', asn_id, organization)
                 asn_id_with_count = asn_id+'_'+str(count)
                 connection.zadd('ip2asnid:', asn_id_with_count, score)
+                if count % 1000 == 0:
+                    update_progress(
+                        "import_asn_to_redis",
+                        count/float(row_count))
             except Exception:
                 continue
+        update_progress("import_asn_to_redis", 1)
 
 
 def find_ipv4_asn_info(connection, ipaddress):
+    print "Test ipaddress is %s" % ipaddress
     if not is_valid_ipv4_address(ipaddress):
         return None
     ipaddress = ipv4_to_score(ipaddress)
@@ -40,7 +50,6 @@ def find_ipv4_asn_info(connection, ipaddress):
         0,
         start=0,
         num=1)
-    print "Test ipaddress is %s\n" % ipaddress
     if not asn_id:
         return None
     asn_id = asn_id[0].partition('_')[0]
