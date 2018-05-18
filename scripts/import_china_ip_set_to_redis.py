@@ -75,13 +75,13 @@ def find_ipv4_info(connection, ipaddress):
 
 def main():
     r = redis.Redis(host=REDIS_SERVER)
-    print "Begin to load cn ipv4 id info to redis db ..."
-    import_ipv4_to_redis(r, CITY_BLOCKS_IPv4_FILE)
-    print "Load Success"
+    # print "Begin to load cn ipv4 id info to redis db ..."
+    # import_ipv4_to_redis(r, CITY_BLOCKS_IPv4_FILE)
+    # print "Load Success"
 
-    print "Begin to load cn ip info to redis db ..."
-    import_info_to_redis(r, CITY_BLOCKS_IPv4_FILE)
-    print "Load Success"
+    # print "Begin to load cn ip info to redis db ..."
+    # import_info_to_redis(r, CITY_BLOCKS_IPv4_FILE)
+    # print "Load Success"
     results = find_ipv4_info(r, '1.2.4.8',)
     print results
 

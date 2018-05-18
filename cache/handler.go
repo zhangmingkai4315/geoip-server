@@ -94,3 +94,35 @@ func getGeoIPASNInfoByIP(ipaddress string) (results []string, err error) {
 	}
 	return []string{asnIDString, orgnazation}, nil
 }
+
+func getGeoISPInfoByIP(ipaddress string) (results []string, err error) {
+	client := GetDBHandler()
+	score, err := ipToScore(ipaddress)
+	if err != nil {
+		return
+	}
+	value1, err := redis.Values(client.Do("ZREVRANGEBYSCORE", "ip2cnid:", score, 0, "withscores", "limit", 0, 1))
+	if err != nil {
+		return
+	}
+	var _score string
+	var _asnID string
+	_, err = redis.Scan(value1, &_asnID, &_score)
+	if err != nil {
+		return
+	}
+	asnIDString := strings.Split(_asnID, "_")[0]
+	asnID, err := strconv.Atoi(asnIDString)
+	if err != nil {
+		return
+	}
+	value2, err := client.Do("HGET", "ip2chinainfo:", asnID)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(value2.([]uint8), &results)
+	if err != nil {
+		return
+	}
+	return results, nil
+}

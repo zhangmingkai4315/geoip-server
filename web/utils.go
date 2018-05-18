@@ -70,8 +70,9 @@ func IsIPv6(str string) bool {
 }
 
 func apiHelp() string {
-	help := `IP To Location Query Api Server
+	help := `IP
 -------------------------------
+IP Global Query [geoip database]
 /api/geoip2/:address (default english)
 	- method get 
 	- return json data
@@ -97,6 +98,33 @@ func apiHelp() string {
 	- example ['1.2.4.8','8.8.8.8'...]
 	- max 1000 items in one query
 	- return list object
-	`
+
+-------------------------------
+ASN Query API [geoip database]
+
+/api/asn/:address (default english)
+	- method get 
+	- return json data
+/api/asn/iplist
+	- method post
+	- example ['1.2.4.8','8.8.8.8'...]
+	- max 1000 items in one query
+	- return list object
+
+-------------------------------
+ISP Query API [private database]
+
+/api/isp/:address (default english)
+	- method get 
+	- return json data
+/api/isp/iplist
+	- method post
+	- example ['1.2.4.8','8.8.8.8'...]
+	- max 1000 items in one query
+	- return list objec
+
+
+`
+
 	return help
 }

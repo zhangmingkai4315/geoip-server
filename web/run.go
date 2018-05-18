@@ -25,5 +25,10 @@ func Start(url string) {
 	router.GET("/api/ip/:ipaddress", httpIPAllQueryHandler)
 	router.POST("/api/ip/iplist", httpIPAllListQueryHandler)
 
+	router.GET("/api/isp/:ipaddress", httpISPQueryHandler)
+	router.POST("/api/isp/iplist", httpISPListQueryHandler)
+
+
+
 	log.Fatal(http.ListenAndServe(url, router))
 }

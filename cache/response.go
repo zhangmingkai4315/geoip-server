@@ -7,10 +7,13 @@ type IPInfo struct {
 	Country     string `json:"country,omitempty"`
 	CountryCode string `json:"country_code,omitempty"`
 	Subdivision string `json:"subdivision,omitempty"`
+	Provience   string `json:"provience,omitempty"`
 	City        string `json:"city,omitempty"`
+	Zone        string `json:"zone,omitempty"`
 	Metro       string `json:"metro,omitempty"`
 	ASN         string `json:"asn,omitempty"`
 	Orgnazation string `json:"orgnazation,omitempty"`
+	ISP         string `json:"isp,omitempty"`
 	Error       string `json:"error,omitempty"`
 }
 
@@ -42,18 +45,35 @@ func (ipinfo *IPInfo) GetASNInfo() error {
 	return nil
 }
 
+// GetISPInfo get one ip isp information from cache
+func (ipinfo *IPInfo) GetISPInfo() {
+	ip := ipinfo.IP
+	info, err := getGeoISPInfoByIP(ip)
+	if err != nil {
+		ipinfo.Error = err.Error()
+		return
+	}
+	ipinfo.Country = info[0]
+	ipinfo.City = info[1]
+	ipinfo.Zone = info[2]
+	ipinfo.ISP = info[3]
+	return
+}
+
 // GetAllInfo will gather all asn data from cache database
 // based ip list, if validate error then skip
-func (ipinfo *IPInfo) GetAllInfo() error {
+func (ipinfo *IPInfo) GetAllInfo() {
 	err := ipinfo.GetIPInfo("en")
 	if err != nil {
-		return err
+		ipinfo.Error = err.Error()
+		return
 	}
 	err = ipinfo.GetASNInfo()
 	if err != nil {
-		return err
+		ipinfo.Error = err.Error() + ipinfo.Error
+		return
 	}
-	return nil
+	return
 }
 
 // IPInfoList hold all ip list info
@@ -61,7 +81,7 @@ type IPInfoList []*IPInfo
 
 // GetIPInfo will gather all ipinfo data from cache database
 // based ipinfo list, if validate error then skip
-func (ipinfoList IPInfoList) GetIPInfo(lang string) error {
+func (ipinfoList IPInfoList) GetIPInfo(lang string) {
 	for _, ipinfo := range ipinfoList {
 		if ipinfo.Error != "" {
 			continue
@@ -78,12 +98,11 @@ func (ipinfoList IPInfoList) GetIPInfo(lang string) error {
 		ipinfo.Subdivision = info[5]
 		ipinfo.Metro = info[7]
 	}
-	return nil
 }
 
 // GetASNInfo will gather all asn data from cache database
 // based ip list, if validate error then skip
-func (ipinfoList IPInfoList) GetASNInfo() error {
+func (ipinfoList IPInfoList) GetASNInfo() {
 	for _, ipinfo := range ipinfoList {
 		if ipinfo.Error != "" {
 			continue
@@ -96,19 +115,31 @@ func (ipinfoList IPInfoList) GetASNInfo() error {
 		ipinfo.ASN = info[0]
 		ipinfo.Orgnazation = info[1]
 	}
-	return nil
 }
 
 // GetAllInfo will gather all asn data from cache database
 // based ip list, if validate error then skip
-func (ipinfoList IPInfoList) GetAllInfo() error {
-	err := ipinfoList.GetIPInfo("en")
-	if err != nil {
-		return err
+func (ipinfoList IPInfoList) GetAllInfo() {
+	ipinfoList.GetIPInfo("en")
+	ipinfoList.GetASNInfo()
+	return
+}
+
+// GetISPInfo will gather all asn data from cache database
+// based ip list, if validate error then skip
+func (ipinfoList IPInfoList) GetISPInfo() {
+	for _, ipinfo := range ipinfoList {
+		if ipinfo.Error != "" {
+			continue
+		}
+		info, err := getGeoISPInfoByIP(ipinfo.IP)
+		if err != nil {
+			ipinfo.Error = err.Error()
+			continue
+		}
+		ipinfo.Country = info[0]
+		ipinfo.City = info[1]
+		ipinfo.Zone = info[2]
+		ipinfo.ISP = info[3]
 	}
-	err = ipinfoList.GetASNInfo()
-	if err != nil {
-		return err
-	}
-	return nil
 }
